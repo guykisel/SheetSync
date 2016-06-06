@@ -908,6 +908,7 @@ class Sheet(object):
         logger.debug("In _update. Checking for bad keys and missing headers")
         fixed_data = {}
         missing_raw_keys = set()
+        rows_to_delete = set()
         for key, row_data in raw_data.iteritems():
             if not isinstance(key, tuple):
                 key = (str(key),)
@@ -977,6 +978,7 @@ class Sheet(object):
                                             None, wks_row.db.keys())
                     self._log_change(key_tuple, "Deleted entry.")
                     self._delete_row(key_tuple, wks_row)
+                    rows_to_delete.add(wks_row.row_num)
                     results.deleted += 1
 
         if missing_raw_keys:
@@ -1002,6 +1004,15 @@ class Sheet(object):
                 self._insert_row(key_tuple, wks_row, raw_row)
 
         self._flush_writes()
+
+        # clean up after ourselves
+        rows_deleted = 0
+        for row in sorted(list(rows_to_delete)):
+            self._worksheet.del_row(row - rows_deleted)
+            rows_deleted += 1
+
+        self._flush_writes()
+
         return results
 
     def _log_change(self, key_tuple, description, old_val="", new_val=""):
