@@ -19,7 +19,15 @@ setup(
     url='https://github.com/mbrenig/SheetSync/',
     packages=['sheetsync'],
     platforms='any',
-    install_requires=requirements,
+    install_requires=[
+        'python-dateutil>=1.5',
+        'oauth2client>=1.4.11',
+        'google-api-python-client>=1.4.0',
+        'gspread'
+    ],
+    dependency_links = [
+        'https://github.com/a-rodin/gspread/archive/master.zip#egg=gspread',
+    ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
